@@ -58,24 +58,6 @@ public class ProductController {
     }
 
 
-    @PostMapping
-    public ResponseEntity<ProductDTO> salvar(@RequestBody ProductDTO objProductDTO) {
-        Product product = new Product();
-        product.setNomeProduto(objProductDTO.getNomeProduto());
-        product.setPreco(objProductDTO.getPreco());
-
-        Product objProduct = productService.salvarProduto(product);
-
-        ProductDTO productDTO = new ProductDTO();
-
-        productDTO.setNomeProduto(objProduct.getNomeProduto());
-        productDTO.setPreco(objProduct.getPreco());
-        productDTO.setDataCadastro(objProduct.getDataCadastro());
-
-
-        return ResponseEntity.status(201).body(productDTO);
-    }
-
 
     @PostMapping("/{userId}")
     public ResponseEntity<ProductDTO> salvarID(@RequestBody ProductDTO objProductDTO, @PathVariable Long userId) {

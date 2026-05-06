@@ -32,12 +32,6 @@ public class ProductService {
         return productRepository.findById(id).orElse(null);
     }
 
-    public Product salvarProduto(Product product) {
-
-        product.setDataCadastro(new Date());
-        return productRepository.save(product);
-    }
-
 
     public Product salvarProdutoID(Product product, Long userID) {
 
