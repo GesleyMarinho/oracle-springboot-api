@@ -1,5 +1,7 @@
 package com.dimas.oracleapi.projetooraclexespringboot.dto.userDTO;
 
+import com.dimas.oracleapi.projetooraclexespringboot.entity.User;
+
 import java.util.Date;
 
 public class ProductDTO {
@@ -7,6 +9,8 @@ public class ProductDTO {
     private String nomeProduto;
     private Double preco;
     private Date dataCadastro;
+    private Long userID;
+
 
     public ProductDTO() {
     }
@@ -15,6 +19,14 @@ public class ProductDTO {
         this.nomeProduto = nomeProduto;
         this.preco = preco;
         this.dataCadastro = dataCadastro;
+    }
+
+    public Long getUserID() {
+        return userID;
+    }
+
+    public void setUserID(Long userID) {
+        this.userID = userID;
     }
 
     public String getNomeProduto() {

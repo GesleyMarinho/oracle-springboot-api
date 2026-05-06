@@ -1,9 +1,6 @@
 package com.dimas.oracleapi.projetooraclexespringboot.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,7 +14,12 @@ public class Product implements Serializable {
     private Long id;
     private String nomeProduto;
     private Double preco;
-    private Date DataCadastro;
+    private Date dataCadastro;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 
     public Product() {
     }
@@ -26,11 +28,17 @@ public class Product implements Serializable {
         this.id = id;
         this.nomeProduto = nomeProduto;
         this.preco = preco;
-        this.DataCadastro = DataCadastro;
+        this.dataCadastro = DataCadastro;
     }
 
-    public Long getId() {
-        return id;
+
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public void setId(Long id) {
@@ -54,10 +62,10 @@ public class Product implements Serializable {
     }
 
     public Date getDataCadastro() {
-        return DataCadastro;
+        return dataCadastro;
     }
 
     public void setDataCadastro(Date DataCadastro) {
-        this.DataCadastro = DataCadastro;
+        this.dataCadastro = DataCadastro;
     }
 }

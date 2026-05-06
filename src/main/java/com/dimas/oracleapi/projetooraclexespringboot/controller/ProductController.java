@@ -2,7 +2,7 @@ package com.dimas.oracleapi.projetooraclexespringboot.controller;
 
 import com.dimas.oracleapi.projetooraclexespringboot.dto.userDTO.ProductDTO;
 import com.dimas.oracleapi.projetooraclexespringboot.entity.Product;
-import com.dimas.oracleapi.projetooraclexespringboot.repository.ProductRepository;
+import com.dimas.oracleapi.projetooraclexespringboot.entity.User;
 import com.dimas.oracleapi.projetooraclexespringboot.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -63,7 +63,6 @@ public class ProductController {
         Product product = new Product();
         product.setNomeProduto(objProductDTO.getNomeProduto());
         product.setPreco(objProductDTO.getPreco());
-        product.setDataCadastro(objProductDTO.getDataCadastro());
 
         Product objProduct = productService.salvarProduto(product);
 
@@ -71,7 +70,27 @@ public class ProductController {
 
         productDTO.setNomeProduto(objProduct.getNomeProduto());
         productDTO.setPreco(objProduct.getPreco());
-        //productDTO.setDataCadastro(objProduct.getDataCadastro());
+        productDTO.setDataCadastro(objProduct.getDataCadastro());
+
+
+        return ResponseEntity.status(201).body(productDTO);
+    }
+
+
+    @PostMapping("/{userId}")
+    public ResponseEntity<ProductDTO> salvarID(@RequestBody ProductDTO objProductDTO, @PathVariable Long userId) {
+        Product product = new Product();
+        product.setNomeProduto(objProductDTO.getNomeProduto());
+        product.setPreco(objProductDTO.getPreco());
+
+        Product objProduct = productService.salvarProdutoID(product,userId);
+
+        ProductDTO productDTO = new ProductDTO();
+
+        productDTO.setNomeProduto(objProduct.getNomeProduto());
+        productDTO.setPreco(objProduct.getPreco());
+        productDTO.setDataCadastro(objProduct.getDataCadastro());
+        productDTO.setUserID(objProduct.getUser().getId());
 
         return ResponseEntity.status(201).body(productDTO);
     }
