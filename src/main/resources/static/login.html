@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Tela Login</title>
+    <style>
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f3f4f6;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 350px;
+            background: white;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #mensagem {
+            text-align: center;
+            margin-bottom: 16px;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Login</h1>
+
+    <div id="mensagem"></div>
+
+    <input type="email" id="email" placeholder="Email"/>
+
+    <input type="password" id="senha" placeholder="Senha"/>
+
+    <button onclick="login()">Login</button>
+
+</div>
+
+<script>
+    async function login() {
+        console.log("clicou");
+
+        const email =
+            document.getElementById('email').value;
+
+        const senha =
+            document.getElementById('senha').value;
+        const body = {
+            email: email,
+            senha: senha
+        }
+
+        try {
+
+            const response = await fetch('http://localhost:8080/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (response.ok) {
+                document.getElementById('mensagem')
+                    .innerHTML = 'Login realizado com sucesso';
+                document.getElementById('mensagem').style.color = 'green';
+                window.location.href = 'home.html'
+            } else {
+
+                document.getElementById("mensagem").innerHTML = 'Usuário ou senha inválidos';
+
+            }
+        } catch (err) {
+        }
+    }
+</script>
+</body>
+</html>

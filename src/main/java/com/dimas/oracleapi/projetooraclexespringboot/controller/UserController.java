@@ -1,5 +1,6 @@
 package com.dimas.oracleapi.projetooraclexespringboot.controller;
 
+import com.dimas.oracleapi.projetooraclexespringboot.dto.userDTO.UserAuthDTO;
 import com.dimas.oracleapi.projetooraclexespringboot.dto.userDTO.UserDTO;
 import com.dimas.oracleapi.projetooraclexespringboot.entity.User;
 import com.dimas.oracleapi.projetooraclexespringboot.service.UserService;
@@ -25,12 +26,18 @@ public class UserController {
 
         User user = new User();
         user.setIdade(userDTO.getIdade());
-        user.setNome(userDTO.getnome());
+        user.setNome(userDTO.getNome());
+        user.setEmail(userDTO.getEmail());
+        user.setSenha(userDTO.getSenha());
+        user.setConfirmSenha(userDTO.getConfirmaSenha());
         User objUser = userService.saveUser(user);
 
         UserDTO objUserDTO = new UserDTO();
-        objUserDTO.setnome(objUser.getNome());
+        objUserDTO.setNome(objUser.getNome());
         objUserDTO.setIdade(objUser.getIdade());
+        objUserDTO.setEmail(objUser.getEmail());
+        objUserDTO.setSenha(objUser.getSenha());
+        objUserDTO.setConfirmaSenha(objUser.getConfirmSenha());
 
         return ResponseEntity.status(201).body(objUserDTO);
     }
@@ -42,7 +49,7 @@ public class UserController {
 
         users.forEach(user -> {
             UserDTO objUserDTO = new UserDTO();
-            objUserDTO.setnome(user.getNome());
+            objUserDTO.setNome(user.getNome());
             objUserDTO.setIdade(user.getIdade());
 
             userDTOs.add(objUserDTO);
@@ -59,7 +66,7 @@ public class UserController {
         }
 
         UserDTO objUserDTO = new UserDTO();
-        objUserDTO.setnome(user.getNome());
+        objUserDTO.setNome(user.getNome());
         objUserDTO.setIdade(user.getIdade());
 
 
@@ -87,17 +94,38 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
 
-        objUser.setNome(userDTO.getnome());
+        objUser.setNome(userDTO.getNome());
         objUser.setIdade(userDTO.getIdade());
+        objUser.setEmail(userDTO.getEmail());
+        objUser.setSenha(userDTO.getSenha());
+        objUser.setConfirmSenha(userDTO.getConfirmaSenha());
         User userUpdated = userService.updateUser(objUser);
 
         UserDTO objUserDTO = new UserDTO();
-        objUserDTO.setnome(userUpdated.getNome());
+        objUserDTO.setNome(userUpdated.getNome());
         objUserDTO.setIdade(userUpdated.getIdade());
+        objUserDTO.setEmail(userUpdated.getEmail());
+        objUserDTO.setSenha(userUpdated.getSenha());
+        objUserDTO.setConfirmaSenha(userUpdated.getConfirmSenha());
 
 
         return ResponseEntity.ok(objUserDTO);
 
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> authenticateUser(@RequestBody UserAuthDTO dto) {
+        User user = userService.findByEmail(dto.getEmail());
+        System.out.println(dto.getEmail() + "|");
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (user.getSenha().equals(dto.getSenha())) {
+            return ResponseEntity.ok("Login realizado com sucesso");
+        }
+        return ResponseEntity.status(401)
+                .body("Usuário ou senha inválidos");
     }
 
 }

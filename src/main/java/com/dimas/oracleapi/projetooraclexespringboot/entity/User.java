@@ -19,26 +19,21 @@ public class User implements Serializable {
     private Long id;
     private String nome;
     private Integer idade;
-
-    @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private List<Product> productList = new ArrayList();
+    private String email;
+    private String senha;
+    private String confirmSenha;
 
     public User() {
+
     }
 
-    public User(Long id, String nome, Integer idade) {
+    public User(Long id, String nome, Integer idade, String email, String senha, String confirmSenha) {
         this.id = id;
         this.nome = nome;
         this.idade = idade;
-    }
-
-    public List<Product> getProductList() {
-        return productList;
-    }
-
-    public void setProductList(List<Product> productList) {
-        this.productList = productList;
+        this.email = email;
+        this.senha = senha;
+        this.confirmSenha = confirmSenha;
     }
 
     public Long getId() {
@@ -63,5 +58,36 @@ public class User implements Serializable {
 
     public void setIdade(Integer idade) {
         this.idade = idade;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public String getConfirmSenha() {
+        return confirmSenha;
+    }
+
+    public void setConfirmSenha(String confirmSenha) {
+        this.confirmSenha = confirmSenha;
+    }
+
+    @Override
+    public String toString() {
+        return "User{id=" + id +
+                ", email='" + email + '\'' +
+                '}';
     }
 }
