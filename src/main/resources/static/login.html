@@ -16,6 +16,16 @@
             font-family: Arial, sans-serif;
         }
 
+        .secondary-button {
+            margin-top: 12px;
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .secondary-button:hover {
+            background: #d1d5db;
+        }
+
         .container {
             width: 350px;
             background: white;
@@ -76,9 +86,20 @@
 
     <button onclick="login()">Login</button>
 
+
+    <button class="secondary-button"
+            onclick="irParaCadastro()">Criar Conta
+    </button>
+
 </div>
 
 <script>
+    function irParaCadastro() {
+
+        window.location.href = 'cadastro.html';
+
+    }
+
     async function login() {
         console.log("clicou");
 

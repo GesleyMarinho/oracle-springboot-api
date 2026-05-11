@@ -22,24 +22,30 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
 
-        User user = new User();
-        user.setIdade(userDTO.getIdade());
-        user.setNome(userDTO.getNome());
-        user.setEmail(userDTO.getEmail());
-        user.setSenha(userDTO.getSenha());
-        user.setConfirmSenha(userDTO.getConfirmaSenha());
-        User objUser = userService.saveUser(user);
+        try {
+            User user = new User();
+            user.setIdade(userDTO.getIdade());
+            user.setNome(userDTO.getNome());
+            user.setEmail(userDTO.getEmail());
+            user.setSenha(userDTO.getSenha());
+            user.setConfirmSenha(userDTO.getConfirmaSenha());
+            User objUser = userService.saveUser(user);
 
-        UserDTO objUserDTO = new UserDTO();
-        objUserDTO.setNome(objUser.getNome());
-        objUserDTO.setIdade(objUser.getIdade());
-        objUserDTO.setEmail(objUser.getEmail());
-        objUserDTO.setSenha(objUser.getSenha());
-        objUserDTO.setConfirmaSenha(objUser.getConfirmSenha());
+            UserDTO objUserDTO = new UserDTO();
+            objUserDTO.setNome(objUser.getNome());
+            objUserDTO.setIdade(objUser.getIdade());
+            objUserDTO.setEmail(objUser.getEmail());
+            objUserDTO.setSenha(objUser.getSenha());
+            objUserDTO.setConfirmaSenha(objUser.getConfirmSenha());
 
-        return ResponseEntity.status(201).body(objUserDTO);
+            return ResponseEntity.status(201).body(objUserDTO);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
+        }
     }
 
     @GetMapping

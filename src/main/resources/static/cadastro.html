@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro Usuário</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f3f4f6;
+            font-family: Arial, sans-serif;
+        }
+
+        .password-container {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .password-container input {
+            margin-bottom: 0;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            width: auto;
+            padding: 0;
+            color: #555;
+        }
+
+        .toggle-password:hover {
+            background: transparent;
+        }
+
+        .container {
+            width: 400px;
+            background: white;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #mensagemCadastro {
+            text-align: center;
+            margin-bottom: 16px;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Cadastro Usuário</h1>
+
+    <div id="mensagemCadastro"></div>
+
+    <input type="text" id="nome" placeholder="Nome do Usuário">
+
+    <input type="number" id="idade" placeholder="Idade">
+
+    <input type="email" id="email" placeholder="Email">
+
+    <div class="password-container">
+
+        <input type="password"
+               id="senha"
+               placeholder="Senha">
+
+        <button type="button"
+                class="toggle-password"
+                onclick="mostrarSenha('senha')">
+            👁
+        </button>
+
+    </div>
+
+    <div class="password-container">
+
+        <input type="password"
+               id="confirmarSenha"
+               placeholder="Confirmar Senha">
+
+        <button type="button"
+                class="toggle-password"
+                onclick="mostrarSenha('confirmarSenha')">
+            👁
+        </button>
+
+    </div>
+
+    <button onclick="cadastrar()">
+        Cadastrar
+    </button>
+
+
+</div>
+<script>
+    function mostrarSenha(idInput) {
+        const inputSenha = document.getElementById(idInput);
+        if (inputSenha.type === 'password') {
+            inputSenha.type = 'text';
+        } else {
+            inputSenha.type = 'password';
+        }
+    }
+
+    async function cadastrar() {
+        const nome = document.getElementById('nome').value;
+        const idade = document.getElementById('idade').value;
+        const email = document.getElementById('email').value;
+        const senha = document.getElementById('senha').value;
+        const confirmarSenha = document.getElementById('confirmarSenha').value;
+
+        const body = {
+            nome: nome,
+            idade: Number(idade),
+            email: email,
+            senha: senha,
+            confirmSenha: confirmarSenha
+        }
+
+
+        if (
+            !email.includes('@') ||
+            (!email.endsWith('.com') &&
+                !email.endsWith('.com.br'))
+        ) {
+
+            document.getElementById('mensagemCadastro')
+                .innerHTML = 'Email inválido';
+
+            document.getElementById('mensagemCadastro')
+                .style.color = 'red';
+
+            return;
+        }
+        if (senha.length < 6) {
+
+            document.getElementById('mensagemCadastro')
+                .innerHTML =
+                'Senha deve ter no mínimo 6 caracteres';
+
+            return;
+        }
+        if (
+            nome === '' ||
+            idade === '' ||
+            email === '' ||
+            senha === '' ||
+            confirmarSenha === ''
+        ) {
+
+            document.getElementById('mensagemCadastro')
+                .innerHTML = 'Preencha todos os campos';
+
+            document.getElementById('mensagemCadastro')
+                .style.color = 'red';
+
+            return;
+        }
+        if (senha !== confirmarSenha) {
+
+            document.getElementById('mensagemCadastro')
+                .innerHTML = 'As senhas não coincidem';
+
+            document.getElementById('mensagemCadastro')
+                .style.color = 'red';
+
+            return;
+        }
+
+        try {
+            const usuarioResponse = await fetch('http://localhost:8080/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (usuarioResponse.ok) {
+
+                document.getElementById('mensagemCadastro').innerHTML = 'Cadastro realizado com sucesso !';
+                document.getElementById('mensagemCadastro').style.color = 'green';
+                window.location.href = 'http://localhost:8080/home.html';
+            } else {
+
+                const mensagemErro =
+                    await usuarioResponse.text();
+
+                document.getElementById("mensagemCadastro")
+                    .innerHTML = mensagemErro;
+
+                document.getElementById("mensagemCadastro")
+                    .style.color = 'red';
+
+            }
+        } catch (err) {
+        }
+
+    }
+</script>
+</body>
+</html>
+

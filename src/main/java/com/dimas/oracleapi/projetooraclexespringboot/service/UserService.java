@@ -2,7 +2,9 @@ package com.dimas.oracleapi.projetooraclexespringboot.service;
 
 import com.dimas.oracleapi.projetooraclexespringboot.entity.User;
 import com.dimas.oracleapi.projetooraclexespringboot.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -19,6 +21,15 @@ public class UserService {
 
 
     public User saveUser(User user) {
+        if (userRepository
+                .buscarPorEmail(user.getEmail())
+                .isPresent()) {
+
+            throw new RuntimeException(
+                    "Email já cadastrado"
+            );
+        }
+
         return userRepository.save(user);
     }
 
