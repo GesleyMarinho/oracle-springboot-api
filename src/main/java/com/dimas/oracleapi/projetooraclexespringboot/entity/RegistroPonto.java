@@ -13,15 +13,11 @@ public class RegistroPonto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //private LocalDateTime dataHora;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    private LocalDateTime entrada;
-
-    private LocalDateTime saidaAlmoco;
-
-    private LocalDateTime voltaAlmoco;
-
-    private LocalDateTime saida;
+    private LocalDateTime dataHora;
 
     @Enumerated(EnumType.STRING)
     private StatusRegistroPonto tipoRegistro;
@@ -29,18 +25,10 @@ public class RegistroPonto {
     public RegistroPonto() {
     }
 
-    /*public RegistroPonto(Long id, LocalDateTime dataHora, StatusRegistroPonto tipoRegistro) {
+    public RegistroPonto(Long id, LocalDateTime dataHora, User user, StatusRegistroPonto tipoRegistro) {
         this.id = id;
         this.dataHora = dataHora;
-        this.tipoRegistro = tipoRegistro;
-    }*/
-
-    public RegistroPonto(Long id, LocalDateTime entrada, LocalDateTime saidaAlmoco, LocalDateTime voltaAlmoco, LocalDateTime saida, StatusRegistroPonto tipoRegistro) {
-        this.id = id;
-        this.entrada = entrada;
-        this.saidaAlmoco = saidaAlmoco;
-        this.voltaAlmoco = voltaAlmoco;
-        this.saida = saida;
+        this.user = user;
         this.tipoRegistro = tipoRegistro;
     }
 
@@ -52,44 +40,20 @@ public class RegistroPonto {
         this.id = id;
     }
 
-    /*public LocalDateTime getDataHora() {
+    public LocalDateTime getDataHora() {
         return dataHora;
     }
 
     public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
-    }*/
-
-    public LocalDateTime getEntrada() {
-        return entrada;
     }
 
-    public void setEntrada(LocalDateTime entrada) {
-        this.entrada = entrada;
+    public User getUser() {
+        return user;
     }
 
-    public LocalDateTime getSaidaAlmoco() {
-        return saidaAlmoco;
-    }
-
-    public void setSaidaAlmoco(LocalDateTime saidaAlmoco) {
-        this.saidaAlmoco = saidaAlmoco;
-    }
-
-    public LocalDateTime getVoltaAlmoco() {
-        return voltaAlmoco;
-    }
-
-    public void setVoltaAlmoco(LocalDateTime voltaAlmoco) {
-        this.voltaAlmoco = voltaAlmoco;
-    }
-
-    public LocalDateTime getSaida() {
-        return saida;
-    }
-
-    public void setSaida(LocalDateTime saida) {
-        this.saida = saida;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public StatusRegistroPonto getTipoRegistro() {

@@ -1,7 +1,10 @@
 package com.dimas.oracleapi.projetooraclexespringboot.service;
 
+import com.dimas.oracleapi.projetooraclexespringboot.ENUM.StatusRegistroPonto;
 import com.dimas.oracleapi.projetooraclexespringboot.entity.RegistroPonto;
+import com.dimas.oracleapi.projetooraclexespringboot.entity.User;
 import com.dimas.oracleapi.projetooraclexespringboot.repository.ResgitroPontoRepository;
+import com.dimas.oracleapi.projetooraclexespringboot.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -10,32 +13,39 @@ import java.time.LocalDateTime;
 public class RegistroPontoService {
 
     private ResgitroPontoRepository resgitroPontoRepository;
+    private UserRepository userRepository;
 
-    public RegistroPontoService(ResgitroPontoRepository resgitroPontoRepository) {
+    public RegistroPontoService(ResgitroPontoRepository resgitroPontoRepository, UserRepository userRepository) {
         this.resgitroPontoRepository = resgitroPontoRepository;
+        this.userRepository = userRepository;
     }
 
-    public RegistroPonto save() {
+    public RegistroPonto save(Long userId) {
 
-        RegistroPonto registroHoje = resgitroPontoRepository.buscarRegistroHoje();
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Usuário não encontrado"));
 
-        if (registroHoje == null) {
-            registroHoje = new RegistroPonto();
-            registroHoje.setEntrada(LocalDateTime.now());
+        long quantidadeRegistrosHoje = resgitroPontoRepository.contarRegistroHoje(userId);
 
-        } else if (registroHoje.getSaidaAlmoco() == null) {
-            registroHoje.setSaidaAlmoco(LocalDateTime.now());
+        StatusRegistroPonto status;
 
-        } else if (registroHoje.getVoltaAlmoco() == null) {
-
-            registroHoje.setVoltaAlmoco( LocalDateTime.now());
-
-        } else if (registroHoje.getSaida() == null) {
-
-            registroHoje.setSaida(LocalDateTime.now());
+        if (quantidadeRegistrosHoje == 0) {
+            status = StatusRegistroPonto.ENTRADA;
+        } else if (quantidadeRegistrosHoje == 1) {
+            status = StatusRegistroPonto.ALMOCO;
+        } else if (quantidadeRegistrosHoje == 2) {
+            status = StatusRegistroPonto.VOLTA_ALMOCO;
+        } else {
+            status = StatusRegistroPonto.SAIDA;
         }
-
-        return resgitroPontoRepository.save(registroHoje);
+        RegistroPonto registroPonto = new RegistroPonto();
+        registroPonto.setUser(user);
+        registroPonto.setDataHora(LocalDateTime.now());
+        registroPonto.setTipoRegistro(status);
+        return resgitroPontoRepository.save(registroPonto);
     }
 
 }

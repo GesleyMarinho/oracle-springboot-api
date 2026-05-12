@@ -2,86 +2,55 @@ package com.dimas.oracleapi.projetooraclexespringboot.dto.RegistroPontoDTO;
 
 import com.dimas.oracleapi.projetooraclexespringboot.ENUM.StatusRegistroPonto;
 
-
 import java.time.LocalDateTime;
 
 public class RegistroPontoDTO {
 
-    //private LocalDateTime dataHora;
-    private LocalDateTime entrada;
+    private LocalDateTime dataHora;
+    private StatusRegistroPonto status;
+    private Long userId;
 
-    private LocalDateTime saidaAlmoco;
-
-    private LocalDateTime voltaAlmoco;
-
-    private LocalDateTime saida;
-
-    private StatusRegistroPonto statusRegistroPonto;
+    private String nomeUsuario;
 
     public RegistroPontoDTO() {
     }
 
-    public RegistroPontoDTO(LocalDateTime entrada, LocalDateTime saidaAlmoco, LocalDateTime voltaAlmoco, LocalDateTime saida, StatusRegistroPonto statusRegistroPonto) {
-        this.entrada = entrada;
-        this.saidaAlmoco = saidaAlmoco;
-        this.voltaAlmoco = voltaAlmoco;
-        this.saida = saida;
-        this.statusRegistroPonto = statusRegistroPonto;
-    }
-
-    public LocalDateTime getEntrada() {
-        return entrada;
-    }
-
-    public void setEntrada(LocalDateTime entrada) {
-        this.entrada = entrada;
-    }
-
-    public LocalDateTime getSaidaAlmoco() {
-        return saidaAlmoco;
-    }
-
-    public void setSaidaAlmoco(LocalDateTime saidaAlmoco) {
-        this.saidaAlmoco = saidaAlmoco;
-    }
-
-    public LocalDateTime getVoltaAlmoco() {
-        return voltaAlmoco;
-    }
-
-    public void setVoltaAlmoco(LocalDateTime voltaAlmoco) {
-        this.voltaAlmoco = voltaAlmoco;
-    }
-
-    public LocalDateTime getSaida() {
-        return saida;
-    }
-
-    public void setSaida(LocalDateTime saida) {
-        this.saida = saida;
-    }
-    /*public RegistroPontoDTO(LocalDateTime dataHora, StatusRegistroPonto statusRegistroPonto) {
-
+    public RegistroPontoDTO(LocalDateTime dataHora, StatusRegistroPonto status, Long userId, String nomeUsuario) {
         this.dataHora = dataHora;
-        this.statusRegistroPonto = statusRegistroPonto;
+        this.status = status;
+        this.userId = userId;
+        this.nomeUsuario = nomeUsuario;
     }
-
 
     public LocalDateTime getDataHora() {
         return dataHora;
     }
 
-    public void setDataHora(
-            LocalDateTime dataHora) {
-
+    public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
-    }*/
-
-    public StatusRegistroPonto getStatusRegistroPonto() {
-        return statusRegistroPonto;
     }
 
-    public void setStatusRegistroPonto(StatusRegistroPonto statusRegistroPonto) {
-        this.statusRegistroPonto = statusRegistroPonto;
+    public StatusRegistroPonto getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusRegistroPonto status) {
+        this.status = status;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getNomeUsuario() {
+        return nomeUsuario;
+    }
+
+    public void setNomeUsuario(String nomeUsuario) {
+        this.nomeUsuario = nomeUsuario;
     }
 }

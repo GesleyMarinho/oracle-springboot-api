@@ -24,54 +24,16 @@ public class RegistroPontoController {
     }
 
     @PostMapping
-    public ResponseEntity<RegistroPontoDTO>
-    insertRegistroPonto() {
+    public ResponseEntity<?> insertRegistroPonto(@RequestBody RegistroPontoDTO dto) {
 
-        RegistroPonto registroPonto =
-                registroPontoService.save();
+        RegistroPonto registroPonto = registroPontoService.save(dto.getUserId());
 
-        RegistroPontoDTO dto =
-                new RegistroPontoDTO();
+        RegistroPontoDTO registroPontoDTO = new RegistroPontoDTO();
 
-        dto.setEntrada(
-                registroPonto.getEntrada());
-
-        dto.setSaidaAlmoco(
-                registroPonto.getSaidaAlmoco());
-
-        dto.setVoltaAlmoco(
-                registroPonto.getVoltaAlmoco());
-
-        dto.setSaida(
-                registroPonto.getSaida());
-
-        return new ResponseEntity<>(
-                dto,
-                HttpStatus.CREATED);
+        registroPontoDTO.setDataHora(LocalDateTime.now());
+        registroPontoDTO.setStatus(registroPonto.getTipoRegistro());
+        registroPontoDTO.setNomeUsuario(registroPonto.getUser().getNome());
+        registroPontoDTO.setUserId(registroPonto.getUser().getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(registroPontoDTO);
     }
-
-    /*@PostMapping
-    public ResponseEntity<RegistroPontoDTO> insertRegistroPonto(@RequestBody RegistroPontoDTO registroPontoDTO) {
-        RegistroPonto registroPonto = new RegistroPonto();
-
-        registroPonto.setEntrada(registroPontoDTO.getEntrada());
-        registroPonto.setSaidaAlmoco(registroPontoDTO.getSaidaAlmoco());
-        registroPonto.setVoltaAlmoco(registroPontoDTO.getVoltaAlmoco());
-        registroPonto.setSaida(registroPontoDTO.getSaida());
-        registroPonto.setTipoRegistro(registroPonto.getTipoRegistro());
-
-
-        registroPontoService.save(registroPonto);
-
-        RegistroPontoDTO objResgitroPonto = new RegistroPontoDTO();
-        objResgitroPonto.setEntrada(registroPonto.getEntrada());
-        objResgitroPonto.setSaida(registroPonto.getSaida());
-        objResgitroPonto.setVoltaAlmoco(registroPonto.getVoltaAlmoco());
-        objResgitroPonto.setSaida(registroPonto.getSaida());
-
-        objResgitroPonto.setStatusRegistroPonto(registroPonto.getTipoRegistro());
-
-
-        return new ResponseEntity<>(objResgitroPonto, HttpStatus.CREATED);
-    }*/
 }
