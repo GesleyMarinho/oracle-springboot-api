@@ -6,12 +6,10 @@ import com.dimas.oracleapi.projetooraclexespringboot.entity.RegistroPonto;
 import com.dimas.oracleapi.projetooraclexespringboot.service.RegistroPontoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/registroPonto")
@@ -35,5 +33,17 @@ public class RegistroPontoController {
         registroPontoDTO.setNomeUsuario(registroPonto.getUser().getNome());
         registroPontoDTO.setUserId(registroPonto.getUser().getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(registroPontoDTO);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<RegistroPontoDTO>> findAllRegistroPonto() {
+        List<RegistroPontoDTO> lista = registroPontoService.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(lista);
+    }
+
+    @GetMapping(value = ("/{id}"))
+    public ResponseEntity<List<RegistroPontoDTO>> findAllRegistroPontoById(@PathVariable Long id) {
+        List<RegistroPontoDTO> lista = registroPontoService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(lista);
     }
 }

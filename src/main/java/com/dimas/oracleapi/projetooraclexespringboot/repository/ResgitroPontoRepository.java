@@ -5,6 +5,8 @@ import com.dimas.oracleapi.projetooraclexespringboot.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface ResgitroPontoRepository extends JpaRepository<RegistroPonto, Long> {
 
     @Query("""
@@ -19,4 +21,6 @@ public interface ResgitroPontoRepository extends JpaRepository<RegistroPonto, Lo
        WHERE r.user.id = :userId
        """)
     long contarRegistroHoje(Long userId);
+
+    List<RegistroPonto> findByUser(User user);
 }
