@@ -4,6 +4,7 @@ import com.dimas.oracleapi.projetooraclexespringboot.entity.RegistroPonto;
 import com.dimas.oracleapi.projetooraclexespringboot.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -15,12 +16,20 @@ public interface ResgitroPontoRepository extends JpaRepository<RegistroPonto, Lo
             """)
     RegistroPonto buscarRegistroHoje();
 
-    @Query("""
-       SELECT COUNT(r)
-       FROM RegistroPonto r
-       WHERE r.user.id = :userId
-       """)
-    long contarRegistroHoje(Long userId);
+    /*@Query("""
+            SELECT COUNT(r)
+            FROM RegistroPonto r
+            WHERE r.user.id = :userId
+            """)
+    long contarRegistroHoje(Long userId);*/
 
     List<RegistroPonto> findByUser(User user);
+
+    @Query(value = """
+            SELECT COUNT(*) FROM tb_registro_ponto 
+            WHERE user_id = :userId 
+            AND TRUNC(data_hora) = TRUNC(SYSDATE)
+            """, nativeQuery = true)
+    long contarRegistroHoje(@Param("userId") Long userId);
+
 }

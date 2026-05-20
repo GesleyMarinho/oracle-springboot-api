@@ -1,11 +1,240 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Registros de Ponto</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            padding: 32px;
+            background: #f3f4f6;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .entrada {
+            color: green;
+        }
+
+        .almoco {
+            color: orange;
+        }
+
+        .volta {
+            color: blue;
+        }
+
+        .saida {
+            color: red;
+        }
+
+    </style>
 </head>
+
 <body>
+
+<div class="container">
+
+    <div class="topo">
+
+        <h1>Meus Registros de Ponto</h1>
+
+        <button onclick="baterPonto()">
+            Bater Ponto
+        </button>
+
+    </div>
+
+    <table>
+
+        <thead>
+
+        <tr>
+            <th>Usuário</th>
+            <th>Data/Hora</th>
+            <th>Status</th>
+        </tr>
+
+        </thead>
+
+        <tbody id="tabelaRegistros">
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<script>
+
+    async function carregarRegistros() {
+
+        const token = localStorage.getItem("token");
+
+        try {
+
+            const response = await fetch(
+                `http://localhost:8080/registroPonto`,
+                {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                }
+            );
+
+            const registros = await response.json();
+
+            const tabela =
+                document.getElementById(
+                    "tabelaRegistros"
+                );
+
+            tabela.innerHTML = "";
+
+            registros.forEach(registro => {
+
+                let classeStatus = "";
+
+                if (registro.status === "ENTRADA") {
+                    classeStatus = "entrada";
+                } else if (registro.status === "ALMOCO") {
+                    classeStatus = "almoco";
+                } else if (registro.status === "VOLTA_ALMOCO") {
+                    classeStatus = "volta";
+                } else {
+                    classeStatus = "saida";
+                }
+
+                tabela.innerHTML += `
+                    <tr>
+                        <td>${registro.nomeUsuario}</td>
+                        <td>${formatarData(registro.dataHora)}</td>
+                        <td class="status ${classeStatus}">
+                            ${registro.status}
+                        </td>
+                    </tr>
+                `;
+            });
+
+        } catch (err) {
+
+            console.log(err);
+
+        }
+    }
+
+    async function baterPonto() {
+
+        const userId =
+            localStorage.getItem("userId");
+
+        try {
+
+            const response = await fetch(
+                "http://localhost:8080/registroPonto",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body: JSON.stringify({
+                        userId: Number(userId)
+                    })
+                }
+            );
+
+            if (response.ok) {
+
+                alert("Ponto registrado com sucesso!");
+
+                carregarRegistros();
+
+            } else {
+
+                const erro =
+                    await response.text();
+
+                alert(erro);
+            }
+
+        } catch (err) {
+
+            console.log(err);
+
+        }
+    }
+
+    function formatarData(data) {
+
+        return new Date(data)
+            .toLocaleString("pt-BR");
+    }
+
+    carregarRegistros();
+
+</script>
 
 </body>
 </html>
-

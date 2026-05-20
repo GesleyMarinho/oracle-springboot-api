@@ -7,117 +7,108 @@ import com.dimas.oracleapi.projetooraclexespringboot.entity.User;
 import com.dimas.oracleapi.projetooraclexespringboot.repository.ResgitroPontoRepository;
 import com.dimas.oracleapi.projetooraclexespringboot.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RegistroPontoService {
 
-    private ResgitroPontoRepository resgitroPontoRepository;
-    private UserRepository userRepository;
+    private static final int LIMITE_REGISTROS_POR_DIA = 4;
 
-    public RegistroPontoService(ResgitroPontoRepository resgitroPontoRepository, UserRepository userRepository) {
+    private final ResgitroPontoRepository resgitroPontoRepository;
+    private final UserRepository userRepository;
+
+    public RegistroPontoService(ResgitroPontoRepository resgitroPontoRepository,
+                                UserRepository userRepository) {
         this.resgitroPontoRepository = resgitroPontoRepository;
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public RegistroPonto save(Long userId) {
+        // 1. Buscar usuário
+        User user = findUserById(userId);
 
-        User user = userRepository
-                .findById(userId)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Usuário não encontrado"));
-
+        // 2. Validar limite de registros
         long quantidadeRegistrosHoje = resgitroPontoRepository.contarRegistroHoje(userId);
 
-        StatusRegistroPonto status;
-
-        if (quantidadeRegistrosHoje == 0) {
-            status = StatusRegistroPonto.ENTRADA;
-        } else if (quantidadeRegistrosHoje == 1) {
-            status = StatusRegistroPonto.ALMOCO;
-        } else if (quantidadeRegistrosHoje == 2) {
-            status = StatusRegistroPonto.VOLTA_ALMOCO;
-        } else {
-            status = StatusRegistroPonto.SAIDA;
+        if (quantidadeRegistrosHoje >= LIMITE_REGISTROS_POR_DIA) {
+            throw new RuntimeException(
+                    String.format("Limite de %d batidas do dia atingido", LIMITE_REGISTROS_POR_DIA)
+            );
         }
+
+        // 3. Determinar o status baseado na quantidade atual
+        StatusRegistroPonto status = determineStatus(quantidadeRegistrosHoje);
+
+        // 4. Criar e salvar o registro
+        RegistroPonto registroPonto = buildRegistroPonto(user, status);
+
+        return resgitroPontoRepository.save(registroPonto);
+    }
+
+    @Transactional(readOnly = true)
+    public List<RegistroPontoDTO> findAll() {
+        return resgitroPontoRepository.findAll()
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<RegistroPontoDTO> findById(Long userId) {
+        // Verificar se usuário existe
+        User user = findUserById(userId);
+
+        return resgitroPontoRepository.findByUser(user)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // Métodos privados auxiliares
+
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException(
+                        String.format("Usuário com ID %d não encontrado", userId)
+                ));
+    }
+
+    private StatusRegistroPonto determineStatus(long quantidadeRegistros) {
+        switch ((int) quantidadeRegistros) {
+            case 0:
+                return StatusRegistroPonto.ENTRADA;
+            case 1:
+                return StatusRegistroPonto.ALMOCO;
+            case 2:
+                return StatusRegistroPonto.VOLTA_ALMOCO;
+            case 3:
+                return StatusRegistroPonto.SAIDA;
+            default:
+                throw new RuntimeException(
+                        String.format("Quantidade inválida de registros: %d", quantidadeRegistros)
+                );
+        }
+    }
+
+    private RegistroPonto buildRegistroPonto(User user, StatusRegistroPonto status) {
         RegistroPonto registroPonto = new RegistroPonto();
         registroPonto.setUser(user);
         registroPonto.setDataHora(LocalDateTime.now());
         registroPonto.setTipoRegistro(status);
-        return resgitroPontoRepository.save(registroPonto);
+        return registroPonto;
     }
 
-      public List<RegistroPontoDTO> findAll() {
-
-        List<RegistroPonto> registros =
-                resgitroPontoRepository.findAll();
-
-        List<RegistroPontoDTO> listaDTO =
-                new ArrayList<>();
-
-        for (RegistroPonto registro : registros) {
-
-            RegistroPontoDTO dto =
-                    new RegistroPontoDTO();
-
-            dto.setDataHora(
-                    registro.getDataHora());
-
-            dto.setStatus(
-                    registro.getTipoRegistro());
-
-            dto.setUserId(
-                    registro.getUser().getId());
-
-            dto.setNomeUsuario(
-                    registro.getUser().getNome());
-
-            listaDTO.add(dto);
-        }
-
-        return listaDTO;
-    }
-
-    public List<RegistroPontoDTO> findById(Long id) {
-
-        User user =
-                userRepository
-                        .findById(id)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Usuário não encontrado"));
-
-        List<RegistroPonto> registros =
-                resgitroPontoRepository
-                        .findByUser(user);
-
-        List<RegistroPontoDTO> listaDTO =
-                new ArrayList<>();
-
-        for (RegistroPonto registro : registros) {
-
-            RegistroPontoDTO dto =
-                    new RegistroPontoDTO();
-
-            dto.setDataHora(
-                    registro.getDataHora());
-
-            dto.setStatus(
-                    registro.getTipoRegistro());
-
-            dto.setUserId(
-                    registro.getUser().getId());
-
-            dto.setNomeUsuario(
-                    registro.getUser().getNome());
-
-            listaDTO.add(dto);
-        }
-
-        return listaDTO;
+    private RegistroPontoDTO convertToDTO(RegistroPonto registro) {
+        RegistroPontoDTO dto = new RegistroPontoDTO();
+        dto.setDataHora(registro.getDataHora());
+        dto.setStatus(registro.getTipoRegistro());
+        dto.setUserId(registro.getUser().getId());
+        dto.setNomeUsuario(registro.getUser().getNome());
+        return dto;
     }
 }
